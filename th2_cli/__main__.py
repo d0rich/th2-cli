@@ -1,10 +1,5 @@
 import fire
-
-def add(x, y):
-  return x + y
-
-def multiply(x, y):
-  return x * y
+from cli import Th2Cli
 
 if __name__ == '__main__':
-  fire.Fire()
+  fire.Fire(Th2Cli())
