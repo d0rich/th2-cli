@@ -1,5 +1,5 @@
 # Run
 
 ```
-poetry run python th2_cli add 20 80
+poetry run python th2_cli install 1-5
 ```

@@ -5,7 +5,7 @@ description = ""
 authors = ["Nikolay Dorofeev <dorich2000@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.8"
 fire = "^0.4.0"
 cli-utils = "^1.0.6"
 pyhelm = "^2.14.5"
