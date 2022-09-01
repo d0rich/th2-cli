@@ -14,4 +14,6 @@ def install_1_5():
     create_namespace(k8s_core, 'monitoring')
     create_namespace(k8s_core, 'service')
     # Apply PV's
+    # TODO: add warning about created folders
     node = choose_node(k8s_core)
+
