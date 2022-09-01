@@ -1,7 +1,7 @@
 from kubernetes.utils import create_from_yaml
 from th2_cli.utils import get_yaml_config
-from th2_cli.utils.kubernetes import connect, create_namespace_object
-from th2_cli.utils.infra import install_flannel, create_namespace
+from th2_cli.utils.kubernetes import connect, get_namespaces, get_nodes
+from th2_cli.utils.infra import install_flannel, create_namespace, choose_node
 
 
 def install_1_5():
@@ -13,4 +13,5 @@ def install_1_5():
     # Create namespaces
     create_namespace(k8s_core, 'monitoring')
     create_namespace(k8s_core, 'service')
-    #
+    # Apply PV's
+    node = choose_node(k8s_core)

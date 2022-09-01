@@ -1,6 +1,5 @@
 import requests
 import yaml
-from kubernetes import *
 
 
 def get_file(url: str) -> str:
