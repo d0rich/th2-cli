@@ -1,8 +1,11 @@
 from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes.utils import create_from_yaml
 from simple_term_menu import TerminalMenu
+from typing import Dict
+import yaml
+
 from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
-from th2_cli.utils import get_yaml_config
+from th2_cli.utils import get_yaml_config, get_file
 
 
 def create_namespace(k8s_core: CoreV1Api, name: str):
@@ -29,3 +32,15 @@ def choose_node(k8s_core: CoreV1Api) -> str:
     node_index = terminal_menu.show()
     chosen_node = nodes[node_index]
     return chosen_node
+
+
+def change_and_apply_config_template(k8s_client: ApiClient, version: str, file_path: str, inserts: Dict[str, str] = {}):
+    raw_template = get_file(f'assets/config-templates/{version}/{file_path}')
+    new_config = raw_template
+    for insert in inserts:
+        new_config = new_config.replace(f'<{insert}>', inserts[insert])
+    yaml_obj = yaml.safe_load_all(new_config)
+    try:
+        create_from_yaml(k8s_client=k8s_client, yaml_objects=yaml_obj)
+    except:
+        print(f'Error while applying "{file_path}"')
