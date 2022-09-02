@@ -26,8 +26,6 @@ def install_flannel(k8s_client: ApiClient):
 def choose_node(k8s_core: CoreV1Api) -> str:
     nodes = get_nodes(k8s_core)
     terminal_menu = TerminalMenu(nodes, title='Kubernetes nodes:')
-    print('Please choose node for storing PersistentVolumes')
     node_index = terminal_menu.show()
     chosen_node = nodes[node_index]
-    print(f'PersistentVolumes will be stored on "{chosen_node}" node')
     return chosen_node

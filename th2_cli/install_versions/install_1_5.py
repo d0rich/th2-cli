@@ -15,5 +15,7 @@ def install_1_5():
     create_namespace(k8s_core, 'service')
     # Apply PV's
     # TODO: add warning about created folders
+    print('Please choose node for storing PersistentVolumes')
     node = choose_node(k8s_core)
+    print(f'PersistentVolumes will be stored on "{node}" node')
 
