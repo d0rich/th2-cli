@@ -1,6 +1,6 @@
 from kubernetes.utils import create_from_yaml
-from th2_cli.utils import get_yaml_config
-from th2_cli.utils.kubernetes import connect, get_namespaces, get_nodes
+from th2_cli.utils import read_value, is_ip
+from th2_cli.utils.kubernetes import connect, get_namespaces, get_nodes, get_cluster_host
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, change_and_apply_config_template
 
 VERSION = '1.5'
@@ -24,4 +24,16 @@ def install_1_5():
     change_and_apply_config_template(k8s_client, VERSION, 'pvs.yaml', {'node-name': node})
     change_and_apply_config_template(k8s_client, VERSION, 'pvcs.yaml')
     print('PV\'s and PVC\'s are created')
+    cluster_host = get_cluster_host(k8s_client)
+    if is_ip(cluster_host):
+        cluster_hostname = read_value('Enter Kubernetes cluster hostname, if it exist.', 'hostname')
+    else:
+        cluster_hostname = cluster_host
+    cassandra_host = read_value('Enter hostname of Cassandra.',
+                                'host', '127.0.0.1')
+    cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
+    schema_link = read_value('Enter link to your infra-schema')
+
+
+
 

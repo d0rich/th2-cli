@@ -1,5 +1,6 @@
 from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes import client, config
+from urllib.parse import urlparse
 from typing import Tuple, List
 
 
@@ -27,3 +28,7 @@ def get_nodes(k8s_core: CoreV1Api) -> List[str]:
     )
     return nodes
 
+
+def get_cluster_host(k8s_client: ApiClient) -> str:
+    url = k8s_client.configuration.host
+    return urlparse(url).netloc.split(':')[0]

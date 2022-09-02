@@ -20,3 +20,20 @@ def get_file(path: str) -> str:
 def get_yaml_config(path: str):
     yaml_text = get_file(path)
     return yaml.safe_load_all(yaml_text)
+
+
+def read_value(question: str, prompt: str = '', default_value: str = '') -> str:
+    if bool(default_value):
+        print(f'{question} (Default: "{default_value}")')
+    else:
+        print(question)
+    value = input(f'{prompt}: ')
+    if bool(value):
+        return value
+    else:
+        return default_value
+
+
+def is_ip(address: str) -> bool:
+    return address.replace('.', '').isnumeric()
+
