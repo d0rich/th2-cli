@@ -32,7 +32,7 @@ def install_1_5():
     cassandra_host = read_value('Enter hostname of Cassandra.',
                                 'host', '127.0.0.1')
     cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
-    schema_link = read_value('Enter link to your infra-schema')
+    schema_link = read_value('Enter link to your infra-schema', 'link')
 
 
 
