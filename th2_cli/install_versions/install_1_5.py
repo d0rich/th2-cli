@@ -26,6 +26,7 @@ def install_1_5():
     print_info('Creating PV\'s and PVC\'s...')
     change_and_apply_config_template(k8s_client, VERSION, 'pvs.yaml', {'node-name': node})
     change_and_apply_config_template(k8s_client, VERSION, 'pvcs.yaml')
+    # Get information about Kubernetes cluster
     cluster_host = get_cluster_host(k8s_client)
     print_used_value('Cluster host', cluster_host)
     if is_ip(cluster_host):
@@ -33,11 +34,13 @@ def install_1_5():
         print_used_value('Cluster hostname', cluster_hostname)
     else:
         cluster_hostname = ''
+    # Get information about Cassandra database
     cassandra_host = read_value('Enter hostname of Cassandra.',
                                 'host', '127.0.0.1')
     print_used_value('Cassandra host', cassandra_host)
     cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
     print_used_value('Cassandra datacenter', cassandra_dc)
+    # Get information about infra-schema
     schema_link = read_value('Enter link to your infra-schema', 'link')
     print_used_value('th2-infra-schema link', schema_link)
     if schema_link.startswith('https://'):
@@ -52,6 +55,7 @@ def install_1_5():
         write_file('infra-mgr-rsa.key', private_key)
         write_file('infra-mgr-rsa.key.pub', public_key)
         create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': private_key})
+    # Deploy infrastructure
     print_info('Deploying monitoring infrastructure...')
     charts_installer = ChartsInstaller(namespace='monitoring', th2_version=VERSION)
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
