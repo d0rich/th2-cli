@@ -2,6 +2,7 @@
 name = "th2-cli"
 version = "0.1.0"
 description = ""
+readme = "README.md"
 authors = ["Nikolay Dorofeev <dorich2000@gmail.com>"]
 
 [tool.poetry.dependencies]
