@@ -44,13 +44,13 @@ def install_1_5():
     schema_link = read_value('Enter link to your infra-schema', 'link')
     print_used_value('th2-infra-schema link', schema_link)
     if schema_link.startswith('https://'):
-        print('th2 will be authenticated in git by Personal Access Token (PAT)')
+        print_info('th2 will be authenticated in git by Personal Access Token (PAT)')
         token = read_value('Enter PAT for your infra-schema', 'PAT')
         print_used_value('Personal Access Token', token)
         create_secret(k8s_core, 'infra-mgr', namespace='service', data={'infra-mgr': 'infra-mgr'})
     else:
         token = None
-        print('th2 will be authenticated in git by SSH key')
+        print_info('th2 will be authenticated in git by SSH key')
         private_key, public_key = generate_ssh_keys()
         write_file('infra-mgr-rsa.key', private_key)
         write_file('infra-mgr-rsa.key.pub', public_key)
