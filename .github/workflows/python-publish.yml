@@ -14,7 +14,7 @@ jobs:
       - name: Run image
         uses: abatilo/actions-poetry@v2.0.0
       - name: Install dependencies
-        run: poetry install
+        run: poetry install --no-interaction --no-root
       - name: Build CLI
         run: poetry build
       - name: Publish package
