@@ -3,7 +3,7 @@ from th2_cli.utils.kubernetes import connect, get_cluster_host, create_secret
 from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, \
-    change_and_apply_config_template, load_and_change_config_template
+    change_and_apply_config_template, load_and_change_config_template, pv_folders_warning
 import yaml
 
 VERSION = '1.5'
@@ -19,10 +19,10 @@ def install_1_5():
     create_namespace(k8s_core, 'monitoring')
     create_namespace(k8s_core, 'service')
     # Apply PV's
-    # TODO: add warning about created folders
     print('Please choose node for storing PersistentVolumes')
     node = choose_node(k8s_core)
     print_used_value('Node for PersistentVolumes storage', node)
+    pv_folders_warning()
     print_info('Creating PV\'s and PVC\'s...')
     change_and_apply_config_template(k8s_client, VERSION, 'pvs.yaml', {'node-name': node})
     change_and_apply_config_template(k8s_client, VERSION, 'pvcs.yaml')

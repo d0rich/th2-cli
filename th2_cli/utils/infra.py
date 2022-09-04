@@ -1,13 +1,17 @@
 from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes.utils import create_from_yaml
-from th2_cli.utils import print_error
+from colorama import Fore, Style, Back
 from simple_term_menu import TerminalMenu
 from typing import Dict
 import yaml
 
 from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
-from th2_cli.utils import get_yaml_config, get_file
+from th2_cli.utils import get_yaml_config, get_file, print_error
 
+
+def pv_folders_warning():
+    print(f'{Fore.YELLOW}Be sure that you have created folders on the chosen node:\n mkdir /opt/grafana /opt/prometheus /opt/loki /opt/rabbitmq{Style.RESET_ALL}')
+    input(f'Press {Back.YELLOW}Enter{Style.RESET_ALL} to continue')
 
 def create_namespace(k8s_core: CoreV1Api, name: str):
     try:
