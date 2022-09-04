@@ -1,8 +1,8 @@
 from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes.utils import create_from_yaml
+from th2_cli.utils import print_error
 from simple_term_menu import TerminalMenu
 from typing import Dict
-from avionix import ChartBuilder
 import yaml
 
 from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
@@ -14,7 +14,7 @@ def create_namespace(k8s_core: CoreV1Api, name: str):
         k8s_core.create_namespace(create_namespace_object(name))
         print(f'"{name}" namespace created')
     except:
-        print(f'"{name}" namespace already exist')
+        print_error(f'"{name}" namespace already exist')
 
 
 def install_flannel(k8s_client: ApiClient):
@@ -22,9 +22,9 @@ def install_flannel(k8s_client: ApiClient):
         flannel_manifest = get_yaml_config(
             "https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml")
         create_from_yaml(k8s_client=k8s_client, yaml_objects=flannel_manifest)
-        print('flannel-cni is installed')
+        print(f'flannel-cni is installed')
     except:
-        print("Error while installing flannel. It might already exist")
+        print_error(f"Error while installing flannel. It might already exist")
 
 
 def choose_node(k8s_core: CoreV1Api) -> str:
@@ -49,5 +49,5 @@ def change_and_apply_config_template(k8s_client: ApiClient, version: str, file_p
     try:
         create_from_yaml(k8s_client=k8s_client, yaml_objects=yaml_obj)
     except:
-        print(f'Error while applying "{file_path}"')
+        print_error(f'Error while applying "{file_path}"')
 

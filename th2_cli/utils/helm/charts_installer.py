@@ -1,5 +1,5 @@
 from avionix import ChartDependency, ChartBuilder, ChartInfo
-from typing import List
+from th2_cli.utils import print_error
 
 
 class ChartsInstaller:
@@ -24,9 +24,12 @@ class ChartsInstaller:
         ))
 
     def install_charts(self):
-        chart_builder = ChartBuilder(self.chart_info, [])
-        chart_builder.install_chart({
-            'namespace': self.namespace,
-            "dependency-update": None
-        })
+        try:
+            chart_builder = ChartBuilder(self.chart_info, [])
+            chart_builder.install_chart({
+                'namespace': self.namespace,
+                "dependency-update": None
+            })
+        except:
+            print_error(f'Deploying infrastructure into "{self.namespace} was unsuccessful')
 

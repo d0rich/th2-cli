@@ -2,6 +2,7 @@ from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes import client, config
 from urllib.parse import urlparse
 from typing import Tuple, List
+from th2_cli.utils import print_error
 
 
 def connect() -> Tuple[ApiClient, CoreV1Api]:
@@ -36,10 +37,14 @@ def get_cluster_host(k8s_client: ApiClient) -> str:
 
 def create_secret(k8s_core: CoreV1Api, name: str, data: dict = None, string_data: dict = None,
                   namespace: str = 'service'):
-    secret = client.V1Secret(
-        metadata=client.V1ObjectMeta(name=name),
-        data=data,
-        string_data=string_data
-    )
-    k8s_core.create_namespaced_secret(namespace=namespace,
-                                      body=secret)
+    try:
+        secret = client.V1Secret(
+            metadata=client.V1ObjectMeta(name=name),
+            data=data,
+            string_data=string_data
+        )
+        k8s_core.create_namespaced_secret(namespace=namespace,
+                                          body=secret)
+    except:
+        print_error(f'Failed to create "{name}" secret')
+

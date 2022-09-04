@@ -1,4 +1,4 @@
-from th2_cli.utils import read_value, is_ip, write_file
+from th2_cli.utils import read_value, is_ip, write_file, print_info, print_used_value
 from th2_cli.utils.kubernetes import connect, get_cluster_host, create_secret
 from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
@@ -10,9 +10,9 @@ VERSION = '1.5'
 
 
 def install_1_5():
-    print('Connecting to the cluster...')
+    print_info('Connecting to the cluster...')
     k8s_client, k8s_core = connect()
-    print("Preparing Kubernetes cluster...")
+    print_info("Preparing Kubernetes cluster...")
     # Install flannel
     install_flannel(k8s_client)
     # Create namespaces
@@ -22,30 +22,37 @@ def install_1_5():
     # TODO: add warning about created folders
     print('Please choose node for storing PersistentVolumes')
     node = choose_node(k8s_core)
-    print(f'PersistentVolumes will be stored on "{node}" node')
-    print('Creating PV\'s and PVC\'s')
+    print_used_value('Node for PersistentVolumes storage', node)
+    print_info('Creating PV\'s and PVC\'s...')
     change_and_apply_config_template(k8s_client, VERSION, 'pvs.yaml', {'node-name': node})
     change_and_apply_config_template(k8s_client, VERSION, 'pvcs.yaml')
-    print('PV\'s and PVC\'s are created')
     cluster_host = get_cluster_host(k8s_client)
+    print_used_value('Cluster host', cluster_host)
     if is_ip(cluster_host):
         cluster_hostname = read_value('Enter Kubernetes cluster hostname, if it exist.', 'hostname')
+        print_used_value('Cluster hostname', cluster_hostname)
     else:
         cluster_hostname = ''
     cassandra_host = read_value('Enter hostname of Cassandra.',
                                 'host', '127.0.0.1')
+    print_used_value('Cassandra host', cassandra_host)
     cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
+    print_used_value('Cassandra datacenter', cassandra_dc)
     schema_link = read_value('Enter link to your infra-schema', 'link')
+    print_used_value('th2-infra-schema link', schema_link)
     if schema_link.startswith('https://'):
         print('th2 will be authenticated in git by Personal Access Token (PAT)')
         token = read_value('Enter PAT for your infra-schema', 'PAT')
+        print_used_value('Personal Access Token', token)
         create_secret(k8s_core, 'infra-mgr', namespace='service', data={'infra-mgr': 'infra-mgr'})
     else:
+        token = None
         print('th2 will be authenticated in git by SSH key')
         private_key, public_key = generate_ssh_keys()
         write_file('infra-mgr-rsa.key', private_key)
         write_file('infra-mgr-rsa.key.pub', public_key)
         create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': private_key})
+    print_info('Deploying monitoring infrastructure...')
     charts_installer = ChartsInstaller(namespace='monitoring', th2_version=VERSION)
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
@@ -65,6 +72,7 @@ def install_1_5():
                                           load_and_change_config_template(VERSION, 'loki.values.yaml')
                                       ))
     charts_installer.install_charts()
+    print_info('Deploying service infrastructure...')
     charts_installer = ChartsInstaller(namespace='service', th2_version=VERSION)
     charts_installer.add_helm_release('fluxcd', 'helm-operator',
                                       'https://charts.fluxcd.io', '1.2.0',
@@ -94,6 +102,7 @@ def install_1_5():
                                           )
                                       })
     charts_installer.install_charts()
+    print_info(f'th2 {VERSION} is installed')
 
 
 
