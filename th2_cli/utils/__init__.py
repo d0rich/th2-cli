@@ -37,3 +37,8 @@ def read_value(question: str, prompt: str = '', default_value: str = '') -> str:
 def is_ip(address: str) -> bool:
     return address.replace('.', '').isnumeric()
 
+
+def write_file(name: str, content: any):
+    f = open(name, "w")
+    f.write(content)
+    f.close()

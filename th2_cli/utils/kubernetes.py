@@ -32,3 +32,14 @@ def get_nodes(k8s_core: CoreV1Api) -> List[str]:
 def get_cluster_host(k8s_client: ApiClient) -> str:
     url = k8s_client.configuration.host
     return urlparse(url).netloc.split(':')[0]
+
+
+def create_secret(k8s_core: CoreV1Api, name: str, data: dict = None, string_data: dict = None,
+                  namespace: str = 'service'):
+    secret = client.V1Secret(
+        metadata=client.V1ObjectMeta(name=name),
+        data=data,
+        string_data=string_data
+    )
+    k8s_core.create_namespaced_secret(namespace=namespace,
+                                      body=secret)

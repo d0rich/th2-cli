@@ -1,6 +1,6 @@
-from kubernetes.utils import create_from_yaml
-from th2_cli.utils import read_value, is_ip
-from th2_cli.utils.kubernetes import connect, get_namespaces, get_nodes, get_cluster_host
+from th2_cli.utils import read_value, is_ip, write_file
+from th2_cli.utils.kubernetes import connect, get_cluster_host, create_secret
+from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, \
     change_and_apply_config_template, load_and_change_config_template
@@ -36,7 +36,16 @@ def install_1_5():
                                 'host', '127.0.0.1')
     cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
     schema_link = read_value('Enter link to your infra-schema', 'link')
-    token = read_value('Enter PAT for your infra-schema', 'PAT')
+    if schema_link.startswith('https://'):
+        print('th2 will be authenticated in git by Personal Access Token (PAT)')
+        token = read_value('Enter PAT for your infra-schema', 'PAT')
+        create_secret(k8s_core, 'infra-mgr', namespace='service', data={'infra-mgr': 'infra-mgr'})
+    else:
+        print('th2 will be authenticated in git by SSH key')
+        private_key, public_key = generate_ssh_keys()
+        write_file('infra-mgr-rsa.key', private_key)
+        write_file('infra-mgr-rsa.key.pub', public_key)
+        create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': private_key})
     charts_installer = ChartsInstaller(namespace='monitoring', th2_version=VERSION)
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
@@ -76,15 +85,14 @@ def install_1_5():
                                                   'host': cluster_hostname or cluster_host,
                                                   'cassandra-host': cassandra_host,
                                                   'cassandra-dc': cassandra_dc,
-                                                  'username': token,
-                                                  'password': token
+                                                  'username': token or '',
+                                                  'password': token or ''
                                               })
                                           ),
                                           **yaml.safe_load(
                                               load_and_change_config_template(VERSION, 'secrets.yaml')
                                           )
                                       })
-
     charts_installer.install_charts()
 
 
