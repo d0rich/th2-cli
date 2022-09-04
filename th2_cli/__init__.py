@@ -1,3 +1,8 @@
-import os
-os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
 __version__ = '0.1.0'
+
+import fire
+from th2_cli.cli import Th2Cli
+
+
+def cli():
+    fire.Fire(Th2Cli())
