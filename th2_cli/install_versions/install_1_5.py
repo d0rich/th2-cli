@@ -58,7 +58,7 @@ def install_1_5():
         print_info('th2 will be authenticated in git by Personal Access Token (PAT)')
         token = read_value('Enter PAT for your infra-schema', 'PAT')
         print_used_value('Personal Access Token', token)
-        create_secret(k8s_core, 'infra-mgr', namespace='service', data={'infra-mgr': 'infra-mgr'})
+        create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': 'infra-mgr'})
     else:
         token = None
         print_info('th2 will be authenticated in git by SSH key')
