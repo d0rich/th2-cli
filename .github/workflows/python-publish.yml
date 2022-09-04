@@ -1,0 +1,26 @@
+name: Publish
+on: 
+  release:
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Run image
+        uses: abatilo/actions-poetry@v2.0.0
+      - name: Install dependencies
+        run: poetry install
+      - name: Build CLI
+        run: poetry build
+      - name: Publish package
+        uses: pypa/gh-action-pypi-publish@27b31702a0e7fc50959f5ad993c78deac1bdfc29
+        with:
+          user: __token__
+          password: ${{ secrets.PYPI_API_TOKEN }}
+        
+
