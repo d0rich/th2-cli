@@ -1,10 +1,12 @@
 from th2_cli.utils import read_value, is_ip, write_file, print_info, print_used_value
 from th2_cli.utils.kubernetes import connect, get_cluster_host, create_secret
+from th2_cli.utils.cassandra import choose_datacenter
 from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, \
     change_and_apply_config_template, load_and_change_config_template, pv_folders_warning
 import yaml
+from simple_term_menu import TerminalMenu
 
 VERSION = '1.5'
 
@@ -35,10 +37,19 @@ def install_1_5():
     else:
         cluster_hostname = ''
     # Get information about Cassandra database
-    cassandra_host = read_value('Enter hostname of Cassandra.',
-                                'host', '127.0.0.1')
+    cassandra_host = read_value('Enter hostname of Cassandra to access it from the Kubernetes cluster', 'host', '127.0.0.1')
     print_used_value('Cassandra host', cassandra_host)
-    cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
+    dc_input_index = TerminalMenu(
+        [
+            'Enter datacenter manually',
+            'Connect to Cassandra and choose available datacenter (Admin credentials required)'
+        ],
+        title='How do you want to specify Cassandra datacenter?'
+    ).show()
+    if dc_input_index == 0:
+        cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
+    else:
+        cassandra_dc = choose_datacenter(cassandra_host)
     print_used_value('Cassandra datacenter', cassandra_dc)
     # Get information about infra-schema
     schema_link = read_value('Enter link to your infra-schema', 'link')

@@ -10,8 +10,10 @@ from th2_cli.utils import get_yaml_config, get_file, print_error
 
 
 def pv_folders_warning():
-    print(f'{Fore.YELLOW}Be sure that you have created folders on the chosen node:\n mkdir /opt/grafana /opt/prometheus /opt/loki /opt/rabbitmq{Style.RESET_ALL}')
+    print(
+        f'{Fore.YELLOW}Be sure that you have created folders on the chosen node:\n mkdir /opt/grafana /opt/prometheus /opt/loki /opt/rabbitmq{Style.RESET_ALL}')
     input(f'Press {Back.YELLOW}Enter{Style.RESET_ALL} to continue')
+
 
 def create_namespace(k8s_core: CoreV1Api, name: str):
     try:
@@ -54,4 +56,3 @@ def change_and_apply_config_template(k8s_client: ApiClient, version: str, file_p
         create_from_yaml(k8s_client=k8s_client, yaml_objects=yaml_obj)
     except:
         print_error(f'Error while applying "{file_path}"')
-
