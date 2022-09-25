@@ -4,11 +4,11 @@ from th2_cli.utils.cassandra import choose_datacenter
 from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, \
-    change_and_apply_config_template, load_and_change_config_template, pv_folders_warning
-import yaml
+    apply_yaml, pv_folders_warning
 from simple_term_menu import TerminalMenu
+from th2_cli.templates.install import InstallTemplates
 
-VERSION = '1.5'
+TH2_VERSION = '1.5'
 
 
 def install_1_5():
@@ -26,8 +26,8 @@ def install_1_5():
     print_used_value('Node for PersistentVolumes storage', node)
     pv_folders_warning()
     print_info('Creating PV\'s and PVC\'s...')
-    change_and_apply_config_template(k8s_client, VERSION, 'pvs.yaml', {'node-name': node})
-    change_and_apply_config_template(k8s_client, VERSION, 'pvcs.yaml')
+    apply_yaml(k8s_client, InstallTemplates.pvs(node_name=node), 'pvs.yaml')
+    apply_yaml(k8s_client, InstallTemplates.pvcs(), 'pvcs.yaml')
     # Get information about Kubernetes cluster
     cluster_host = get_cluster_host(k8s_client)
     print_used_value('Cluster host', cluster_host)
@@ -68,56 +68,37 @@ def install_1_5():
         create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': private_key})
     # Deploy infrastructure
     print_info('Deploying monitoring infrastructure...')
-    charts_installer = ChartsInstaller(namespace='monitoring', th2_version=VERSION)
+    charts_installer = ChartsInstaller(namespace='monitoring', th2_version=TH2_VERSION)
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
-                                      yaml.safe_load(
-                                          load_and_change_config_template(VERSION, 'prometheus-operator.values.yaml',
-                                                                          {'hosts': cluster_hostname})
-                                      ))
+                                      InstallTemplates.prometheus_operator_values(hosts=cluster_hostname))
     charts_installer.add_helm_release('kubernetes-dashboard', 'kubernetes-dashboard',
                                       'https://kubernetes.github.io/dashboard/', '5.9.0',
-                                      yaml.safe_load(
-                                          load_and_change_config_template(VERSION, 'dashboard.values.yaml',
-                                                                          {'hosts': cluster_hostname})
-                                      ))
+                                      InstallTemplates.dashboard_values(hosts=cluster_hostname))
     charts_installer.add_helm_release('grafana', 'loki-stack',
                                       'https://grafana.github.io/helm-charts', '0.40.1',
-                                      yaml.safe_load(
-                                          load_and_change_config_template(VERSION, 'loki.values.yaml')
-                                      ))
+                                      InstallTemplates.loki_values())
     charts_installer.install_charts()
     print_info('Deploying service infrastructure...')
-    charts_installer = ChartsInstaller(namespace='service', th2_version=VERSION)
+    charts_installer = ChartsInstaller(namespace='service', th2_version=TH2_VERSION)
     charts_installer.add_helm_release('fluxcd', 'helm-operator',
                                       'https://charts.fluxcd.io', '1.2.0',
-                                      yaml.safe_load(
-                                          load_and_change_config_template(VERSION, 'helm-operator.values.yaml')
-                                      ))
+                                      InstallTemplates.helm_operator_values())
     charts_installer.add_helm_release('ingress-nginx', 'ingress-nginx',
                                       'https://kubernetes.github.io/ingress-nginx', '3.31.0',
-                                      yaml.safe_load(
-                                          load_and_change_config_template(VERSION, 'ingress.values.yaml')
-                                      ))
+                                      InstallTemplates.ingress_values())
     charts_installer.add_helm_release('th2', 'th2',
                                       'https://th2-net.github.io', '1.5.4',
                                       {
-                                          **yaml.safe_load(
-                                              load_and_change_config_template(VERSION, 'service.values.yaml', {
-                                                  'repository': schema_link,
-                                                  'host': cluster_hostname or cluster_host,
-                                                  'cassandra-host': cassandra_host,
-                                                  'cassandra-dc': cassandra_dc,
-                                                  'username': token or '',
-                                                  'password': token or ''
-                                              })
-                                          ),
-                                          **yaml.safe_load(
-                                              load_and_change_config_template(VERSION, 'secrets.yaml')
-                                          )
+                                          **InstallTemplates.service_values(schema_link=schema_link,
+                                                                            pat_token=token or '',
+                                                                            cluster_host=cluster_hostname or cluster_host,
+                                                                            cassandra_host=cassandra_host,
+                                                                            cassandra_datacenter=cassandra_dc),
+                                          **InstallTemplates.secrets()
                                       })
     charts_installer.install_charts()
-    print_info(f'th2 {VERSION} is installed')
+    print_info(f'th2 {TH2_VERSION} is installed')
 
 
 
