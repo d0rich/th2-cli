@@ -1,4 +1,4 @@
-# image:
+yaml = '''# image:
 #   repository: kubernetesui/dashboard
 protocolHttp: true
 rbac:
@@ -15,4 +15,4 @@ ingress:
     nginx.ingress.kubernetes.io/configuration-snippet: rewrite ^/([a-z\-0-9]*)$ $scheme://$http_host/$1/ redirect;
   paths:
     - /dashboard($|/.*)
-  hosts: [<hosts>]
+  hosts: [<hosts>]'''

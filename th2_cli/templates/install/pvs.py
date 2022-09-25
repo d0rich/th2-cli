@@ -1,4 +1,4 @@
----
+yaml = '''---
 apiVersion: v1
 kind: PersistentVolume
 metadata:
@@ -124,4 +124,4 @@ spec:
 #            - key: kubernetes.io/hostname
 #              operator: In
 #              values:
-#                - <node-name>
+#                - <node-name>'''

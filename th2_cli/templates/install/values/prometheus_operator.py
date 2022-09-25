@@ -1,4 +1,4 @@
-global:
+yaml = '''global:
   imagePullSecrets:
 # alertmanager:
 #   alertmanagerSpec:
@@ -86,4 +86,4 @@ grafana:
 #     repository: quay.io/prometheus/node-exporter
 # kube-state-metrics:
 #   image:
-#     repository: quay.io/coreos/kube-state-metrics
+#     repository: quay.io/coreos/kube-state-metrics'''

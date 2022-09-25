@@ -1,6 +1,7 @@
 import requests
 import os
 import yaml
+from typing import Iterator
 from colorama import Fore, Back, Style
 
 
@@ -18,7 +19,7 @@ def get_file(path: str) -> str:
     return content
 
 
-def get_yaml_config(path: str):
+def get_yaml_config(path: str) -> Iterator[dict]:
     yaml_text = get_file(path)
     return yaml.safe_load_all(yaml_text)
 

@@ -2,11 +2,10 @@ from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes.utils import create_from_yaml
 from colorama import Fore, Style, Back
 from simple_term_menu import TerminalMenu
-from typing import Dict
-import yaml
+from typing import Iterator
 
 from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
-from th2_cli.utils import get_yaml_config, get_file, print_error
+from th2_cli.utils import get_yaml_config, print_error
 
 
 def pv_folders_warning():
@@ -41,18 +40,8 @@ def choose_node(k8s_core: CoreV1Api) -> str:
     return chosen_node
 
 
-def load_and_change_config_template(version: str, file_path: str, inserts: Dict[str, str] = {}) -> str:
-    raw_template = get_file(f'assets/config-templates/{version}/{file_path}')
-    new_config = raw_template
-    for insert in inserts:
-        new_config = new_config.replace(f'<{insert}>', inserts[insert])
-    return new_config
-
-
-def change_and_apply_config_template(k8s_client: ApiClient, version: str, file_path: str, inserts: Dict[str, str] = {}):
-    config = load_and_change_config_template(version, file_path, inserts)
-    yaml_obj = yaml.safe_load_all(config)
+def apply_yaml(k8s_client: ApiClient, yaml_obj: Iterator[dict], file_name: str = 'undefined'):
     try:
         create_from_yaml(k8s_client=k8s_client, yaml_objects=yaml_obj)
     except:
-        print_error(f'Error while applying "{file_path}"')
+        print_error(f'Error while applying "{file_name}"')

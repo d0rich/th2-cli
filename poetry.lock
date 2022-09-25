@@ -445,7 +445,7 @@ test = ["websockets"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "2d8723487c25f5773dfb6a49ac5d8e452743dc5a16962eb6ccd523afceb33c34"
+content-hash = "b10df19a0f890d692f16169797429176e0cda1afdb7ef8e18ae9a774ab6d01da"
 
 [metadata.files]
 atomicwrites = [
