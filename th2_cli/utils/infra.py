@@ -2,11 +2,10 @@ from kubernetes.client import ApiClient, CoreV1Api, V1Namespace
 from kubernetes.utils import create_from_yaml
 from colorama import Fore, Style, Back
 from simple_term_menu import TerminalMenu
-from typing import Dict, Iterator
-import yaml
+from typing import Iterator
 
 from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
-from th2_cli.utils import get_yaml_config, get_file, print_error
+from th2_cli.utils import get_yaml_config, print_error
 
 
 def pv_folders_warning():
@@ -39,14 +38,6 @@ def choose_node(k8s_core: CoreV1Api) -> str:
     node_index = terminal_menu.show()
     chosen_node = nodes[node_index]
     return chosen_node
-
-
-def load_and_change_config_template(version: str, file_path: str, inserts: Dict[str, str] = {}) -> str:
-    raw_template = get_file(f'assets/config-templates/{version}/{file_path}')
-    new_config = raw_template
-    for insert in inserts:
-        new_config = new_config.replace(f'<{insert}>', inserts[insert])
-    return new_config
 
 
 def apply_yaml(k8s_client: ApiClient, yaml_obj: Iterator[dict], file_name: str = 'undefined'):
