@@ -8,10 +8,10 @@ from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, 
 from simple_term_menu import TerminalMenu
 from th2_cli.templates.install import InstallTemplates
 
-TH2_VERSION = '1.5'
+TH2_VERSION = '1.5.4'
 
 
-def install_1_5():
+def install():
     print_info('Connecting to the cluster...')
     k8s_client, k8s_core = connect()
     print_info("Preparing Kubernetes cluster...")
