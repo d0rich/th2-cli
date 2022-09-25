@@ -1,6 +1,6 @@
 from avionix import ChartDependency, ChartBuilder, ChartInfo
 from th2_cli.utils import print_error
-
+import tempfile
 
 class ChartsInstaller:
 
@@ -25,7 +25,7 @@ class ChartsInstaller:
 
     def install_charts(self):
         try:
-            chart_builder = ChartBuilder(self.chart_info, [])
+            chart_builder = ChartBuilder(self.chart_info, [], output_directory=tempfile.gettempdir())
             chart_builder.install_chart({
                 'namespace': self.namespace,
                 "dependency-update": None
