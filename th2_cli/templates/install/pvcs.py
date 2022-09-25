@@ -1,4 +1,4 @@
----
+yaml = '''---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
@@ -31,4 +31,4 @@ spec:
   storageClassName: local-storage
   selector:
     matchLabels:
-      app: "grafana"
+      app: "grafana"'''

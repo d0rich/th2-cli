@@ -1,4 +1,4 @@
-loki:
+yaml = '''loki:
   # image:
   #   pullPolicy: IfNotPresent
   #   repository: grafana/loki
@@ -24,4 +24,4 @@ promtail:
       memory: 400Mi
     requests:
       cpu: 200m
-      memory: 200Mi
+      memory: 200Mi'''

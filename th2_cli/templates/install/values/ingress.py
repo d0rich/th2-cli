@@ -1,4 +1,4 @@
-imagePullSecrets:
+yaml = '''imagePullSecrets:
 controller:
   service:
     type: NodePort
@@ -12,4 +12,4 @@ controller:
 # defaultBackend:
 #   image:
 #     repository: defaultbackend-amd64
-#     tag: "1.5"
+#     tag: "1.5"'''

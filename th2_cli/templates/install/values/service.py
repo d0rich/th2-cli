@@ -1,4 +1,4 @@
-infraMgr:
+yaml = '''infraMgr:
   git:
     repository: <repository>
     httpAuthUsername: <username>
@@ -20,4 +20,4 @@ cassandra:
   internal: false
   host: <cassandra-host>
   cluster:
-    datacenter: <datacenter>
+    datacenter: <datacenter>'''
