@@ -4,7 +4,7 @@ from th2_cli.utils.cassandra import choose_datacenter
 from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, \
-    apply_yaml, pv_folders_warning
+    apply_yaml, pv_folders_warning, preinstall_warning
 from simple_term_menu import TerminalMenu
 from th2_cli.templates.install import InstallTemplates
 
@@ -12,6 +12,7 @@ TH2_VERSION = '1.5.4'
 
 
 def install():
+    preinstall_warning()
     print_info('Connecting to the cluster...')
     k8s_client, k8s_core = connect()
     print_info("Preparing Kubernetes cluster...")

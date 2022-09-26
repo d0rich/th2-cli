@@ -8,9 +8,21 @@ from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
 from th2_cli.utils import get_yaml_config, print_error
 
 
+def preinstall_warning():
+    print(f'{Fore.YELLOW}Before th2 installation you should fulfill following prerequisites:')
+    print(f'  1. You should have {Fore.CYAN}Kubernetes cluster{Fore.YELLOW} deployed {Fore.RED}(v1.19 - 1.20){Fore.YELLOW};')
+    print(f'    1.1. You should have {Fore.CYAN}kubectl{Fore.YELLOW} installed and configured with {Fore.RED}k8s admin '
+          f'profile{Fore.YELLOW};')
+    print(f'  2. You should have {Fore.CYAN}Cassandra database{Fore.YELLOW} deployed {Fore.RED}(v3.11.6+){Fore.YELLOW}.{Style.RESET_ALL}')
+    proceed = input(f'Proceed to th2 installation ({Fore.YELLOW}y/N{Style.RESET_ALL}): ')
+    if proceed.lower() != 'y':
+        print(f'{Fore.YELLOW}Cancelling installation...{Style.RESET_ALL}')
+        exit(1)
+
+
 def pv_folders_warning():
-    print(
-        f'{Fore.YELLOW}Be sure that you have created folders on the chosen node:\n mkdir /opt/grafana /opt/prometheus /opt/loki /opt/rabbitmq{Style.RESET_ALL}')
+    print(f'{Fore.YELLOW}Be sure that you have created folders on the chosen node:')
+    print(f'{Style.BRIGHT}mkdir /opt/grafana /opt/prometheus /opt/loki /opt/rabbitmq{Style.RESET_ALL}')
     input(f'Press {Back.YELLOW}Enter{Style.RESET_ALL} to continue')
 
 
