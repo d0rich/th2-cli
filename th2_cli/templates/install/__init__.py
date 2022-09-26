@@ -46,13 +46,13 @@ class InstallTemplates:
         return yaml.safe_load(changed_template)
 
     @staticmethod
-    def service_values(schema_link: str, pat_token: str = '',
+    def service_values(schema_link: str, git_username: str = '', git_password: str = '',
                        cluster_host: str = '',
                        cassandra_host: str = '127.0.0.1', cassandra_datacenter: str = 'datacenter1') -> dict:
         changed_template = service_values_yaml\
             .replace('<repository>', schema_link)\
-            .replace('<username>', pat_token)\
-            .replace('<password>', pat_token)\
+            .replace('<username>', git_username)\
+            .replace('<password>', git_password)\
             .replace('<host>', cluster_host)\
             .replace('<cassandra-host>', cassandra_host)\
             .replace('<cassandra-dc>', cassandra_datacenter)

@@ -92,7 +92,8 @@ def install():
                                       'https://th2-net.github.io', '1.5.4',
                                       {
                                           **InstallTemplates.service_values(schema_link=schema_link,
-                                                                            pat_token=token or '',
+                                                                            git_username=token or '',
+                                                                            git_password=token or '',
                                                                             cluster_host=cluster_hostname or cluster_host,
                                                                             cassandra_host=cassandra_host,
                                                                             cassandra_datacenter=cassandra_dc),
