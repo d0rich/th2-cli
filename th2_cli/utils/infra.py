@@ -3,6 +3,7 @@ from kubernetes.utils import create_from_yaml
 from colorama import Fore, Style, Back
 from simple_term_menu import TerminalMenu
 from typing import Iterator
+import yaml
 
 from th2_cli.utils.kubernetes import create_namespace_object, get_nodes
 from th2_cli.utils import get_yaml_config, print_error
@@ -20,6 +21,15 @@ def preinstall_warning():
         exit(1)
 
 
+def pre_delete_warning():
+    print(f'{Fore.YELLOW}For th2 deletion you should have {Fore.CYAN}kubectl{Fore.YELLOW} installed and configured with'
+          f' {Fore.RED}k8s admin profile{Style.RESET_ALL}')
+    proceed = input(f'Proceed to th2 deletion ({Fore.YELLOW}y/N{Style.RESET_ALL}): ')
+    if proceed.lower() != 'y':
+        print(f'{Fore.YELLOW}Cancelling deletion...{Style.RESET_ALL}')
+        exit(1)
+
+
 def pv_folders_warning():
     print(f'{Fore.YELLOW}Be sure that you have created folders on the chosen node:')
     print(f'{Style.BRIGHT}mkdir /opt/grafana /opt/prometheus /opt/loki /opt/rabbitmq{Style.RESET_ALL}')
@@ -33,6 +43,12 @@ def create_namespace(k8s_core: CoreV1Api, name: str):
     except:
         print_error(f'"{name}" namespace already exist')
 
+
+def delete_namespace(k8s_core: CoreV1Api, name: str):
+    try:
+        k8s_core.delete_namespace(name=name)
+    except:
+        print_error(f'Unable to delete "{name}" namespace')
 
 def install_flannel(k8s_client: ApiClient):
     try:
@@ -57,3 +73,12 @@ def apply_yaml(k8s_client: ApiClient, yaml_obj: Iterator[dict], file_name: str =
         create_from_yaml(k8s_client=k8s_client, yaml_objects=yaml_obj)
     except:
         print_error(f'Error while applying "{file_name}"')
+
+
+def get_infra_mgr_config(k8s_core: CoreV1Api) -> dict:
+    try:
+        config_map = k8s_core.read_namespaced_config_map('infra-mgr', 'service')
+        config = yaml.safe_load(config_map.data['config.yml'])
+        return config
+    except:
+        print_error(f'Error accessing th2-infra-mgr config map')
