@@ -5,6 +5,7 @@ from th2_cli.utils.crypto import generate_ssh_keys
 from th2_cli.utils.helm.charts_installer import ChartsInstaller
 from th2_cli.utils.infra import install_flannel, create_namespace, choose_node, \
     apply_yaml, pv_folders_warning, preinstall_warning
+from th2_cli.utils.install_config import InstallConfig
 from simple_term_menu import TerminalMenu
 from th2_cli.templates.install import InstallTemplates
 
@@ -15,6 +16,7 @@ def install():
     preinstall_warning()
     print_info('Connecting to the cluster...')
     k8s_client, k8s_core = connect()
+    install_config = InstallConfig()
     print_info("Preparing Kubernetes cluster...")
     # Install flannel
     install_flannel(k8s_client)
@@ -23,23 +25,22 @@ def install():
     create_namespace(k8s_core, 'service')
     # Apply PV's
     print('Please choose node for storing PersistentVolumes')
-    node = choose_node(k8s_core)
-    print_used_value('Node for PersistentVolumes storage', node)
+    install_config.kubernetes.pvs_node = choose_node(k8s_core)
+    print_used_value('Node for PersistentVolumes storage', install_config.kubernetes.pvs_node)
     pv_folders_warning()
     print_info('Creating PV\'s and PVC\'s...')
-    apply_yaml(k8s_client, InstallTemplates.pvs(node_name=node), 'pvs.yaml')
+    apply_yaml(k8s_client, InstallTemplates.pvs(node_name=install_config.kubernetes.pvs_node), 'pvs.yaml')
     apply_yaml(k8s_client, InstallTemplates.pvcs(), 'pvcs.yaml')
     # Get information about Kubernetes cluster
-    cluster_host = get_cluster_host(k8s_client)
-    print_used_value('Cluster host', cluster_host)
-    if is_ip(cluster_host):
-        cluster_hostname = read_value('Enter Kubernetes cluster hostname, if it exist.', 'hostname')
-        print_used_value('Cluster hostname', cluster_hostname)
-    else:
-        cluster_hostname = ''
+    install_config.kubernetes.host = get_cluster_host(k8s_client)
+    print_used_value('Cluster host', install_config.kubernetes.host)
+    if is_ip(install_config.kubernetes.host):
+        install_config.kubernetes.host = read_value('Enter Kubernetes cluster hostname, if it exist.', 'hostname')
+        print_used_value('Cluster hostname', install_config.kubernetes.hostname())
     # Get information about Cassandra database
-    cassandra_host = read_value('Enter hostname of Cassandra to access it from the Kubernetes cluster', 'host', '127.0.0.1')
-    print_used_value('Cassandra host', cassandra_host)
+    install_config.cassandra.host = read_value('Enter hostname of Cassandra to access it from the Kubernetes cluster',
+                                               'host', '127.0.0.1')
+    print_used_value('Cassandra host', install_config.cassandra.host)
     dc_input_index = TerminalMenu(
         [
             'Enter datacenter manually',
@@ -48,20 +49,21 @@ def install():
         title='How do you want to specify Cassandra datacenter?'
     ).show()
     if dc_input_index == 0:
-        cassandra_dc = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
+        install_config.cassandra.datacenter = read_value('Enter Cassandra datacenter name.', 'datacenter', 'datacenter1')
     else:
-        cassandra_dc = choose_datacenter(cassandra_host)
-    print_used_value('Cassandra datacenter', cassandra_dc)
+        install_config.cassandra.datacenter = choose_datacenter(install_config.cassandra.host)
+    print_used_value('Cassandra datacenter', install_config.cassandra.datacenter)
     # Get information about infra-schema
-    schema_link = read_value('Enter link to your infra-schema', 'link')
-    print_used_value('th2-infra-schema link', schema_link)
-    if schema_link.startswith('https://'):
+    install_config.infra_mgr.git.repository = read_value('Enter link to your infra-schema', 'link')
+    print_used_value('th2-infra-schema link', install_config.infra_mgr.git.repository)
+    if install_config.infra_mgr.git.repository.startswith('https://'):
         print_info('th2 will be authenticated in git by Personal Access Token (PAT)')
         token = read_value('Enter PAT for your infra-schema', 'PAT')
+        install_config.infra_mgr.git.httpAuthUsername = token
+        install_config.infra_mgr.git.httpAuthPassword = token
         print_used_value('Personal Access Token', token)
         create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': 'infra-mgr'})
     else:
-        token = None
         print_info('th2 will be authenticated in git by SSH key')
         private_key, public_key = generate_ssh_keys()
         write_file('infra-mgr-rsa.key', private_key)
@@ -72,10 +74,11 @@ def install():
     charts_installer = ChartsInstaller(namespace='monitoring', th2_version=TH2_VERSION)
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
-                                      InstallTemplates.prometheus_operator_values(hosts=cluster_hostname))
+                                      InstallTemplates.prometheus_operator_values(
+                                          hosts=install_config.kubernetes.hostname()))
     charts_installer.add_helm_release('kubernetes-dashboard', 'kubernetes-dashboard',
                                       'https://kubernetes.github.io/dashboard/', '5.9.0',
-                                      InstallTemplates.dashboard_values(hosts=cluster_hostname))
+                                      InstallTemplates.dashboard_values(hosts=install_config.kubernetes.hostname()))
     charts_installer.add_helm_release('grafana', 'loki-stack',
                                       'https://grafana.github.io/helm-charts', '0.40.1',
                                       InstallTemplates.loki_values())
@@ -91,12 +94,13 @@ def install():
     charts_installer.add_helm_release('th2', 'th2',
                                       'https://th2-net.github.io', '1.5.4',
                                       {
-                                          **InstallTemplates.service_values(schema_link=schema_link,
-                                                                            git_username=token or '',
-                                                                            git_password=token or '',
-                                                                            cluster_host=cluster_hostname or cluster_host,
-                                                                            cassandra_host=cassandra_host,
-                                                                            cassandra_datacenter=cassandra_dc),
+                                          **InstallTemplates.service_values(
+                                              schema_link=install_config.infra_mgr.git.repository,
+                                              git_username=install_config.infra_mgr.git.httpAuthUsername,
+                                              git_password=install_config.infra_mgr.git.httpAuthPassword,
+                                              cluster_host=install_config.kubernetes.host,
+                                              cassandra_host=install_config.cassandra.host,
+                                              cassandra_datacenter=install_config.cassandra.datacenter),
                                           **InstallTemplates.secrets()
                                       })
     charts_installer.install_charts()
