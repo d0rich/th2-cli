@@ -15,11 +15,11 @@ def delete():
     delete_namespace(k8s_core, 'service')
     print_info('Deleting th2 namespaces...')
     for ns in th2_namespaces:
-        print_info(f'Deleting {ns} namespace...')
+        print(f'Deleting {ns} namespace...')
         delete_namespace(k8s_core, ns)
     print_info('Deleting th2 PersistentVolumes...')
     for pv in get_pvs(k8s_core):
-        print_info(f'Deleting {pv} PersistentVolume...')
+        print(f'Deleting {pv} PersistentVolume...')
         delete_pv(k8s_core, pv)
     print_info('th2 is deleted from your Kubernetes cluster')
 
