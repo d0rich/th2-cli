@@ -11,12 +11,13 @@ def get_file(path: str) -> str:
         response.close()
         content = response.content
     else:
-        file_path = os.path.abspath(
-            os.path.join(os.path.abspath(__file__), os.pardir, os.pardir, os.pardir, path)
-        )
-        file = open(file_path)
+        file = open(path)
         content = file.read()
     return content
+
+
+def check_file(path: str) -> bool:
+    return os.path.exists(path)
 
 
 def get_yaml_config(path: str) -> Iterator[dict]:
@@ -42,6 +43,14 @@ def read_value(question: str, prompt: str = '', default_value: str = '') -> str:
     if not bool(value):
         value = default_value
     return value
+
+
+def yes_no_input(message: str, yes_by_default: bool = False) -> bool:
+    proceed = input(f'{message} ({Fore.YELLOW}{"Y/n" if yes_by_default else "y/N"}{Style.RESET_ALL}): ')
+    if yes_by_default:
+        return proceed.lower() != 'n'
+    else:
+        return proceed.lower() == 'y'
 
 
 def print_used_value(description: str, value: str):

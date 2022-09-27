@@ -1,8 +1,10 @@
 from dataclasses import dataclass
+from dataclass_wizard import YAMLWizard
 from th2_cli.utils import is_ip
 
+
 @dataclass
-class InstallConfig:
+class InstallConfig(YAMLWizard):
     @dataclass
     class KubernetesConfigSection:
         pvs_node: str = ''
@@ -23,8 +25,8 @@ class InstallConfig:
         @dataclass
         class GitSection:
             repository: str = ''
-            httpAuthUsername: str = ''
-            httpAuthPassword: str = ''
+            http_auth_username: str = ''
+            http_auth_password: str = ''
 
         git: GitSection = GitSection()
 
