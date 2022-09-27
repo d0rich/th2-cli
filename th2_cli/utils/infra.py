@@ -11,10 +11,12 @@ from th2_cli.utils import get_yaml_config, print_error, enter_to_continue
 
 def preinstall_warning():
     print(f'{Fore.YELLOW}Before th2 installation you should fulfill following prerequisites:')
-    print(f'  1. You should have {Fore.CYAN}Kubernetes cluster{Fore.YELLOW} deployed {Fore.RED}(v1.19 - 1.20){Fore.YELLOW};')
+    print(
+        f'  1. You should have {Fore.CYAN}Kubernetes cluster{Fore.YELLOW} deployed {Fore.RED}(v1.19 - 1.20){Fore.YELLOW};')
     print(f'    1.1. You should have {Fore.CYAN}kubectl{Fore.YELLOW} installed and configured with {Fore.RED}k8s admin '
           f'profile{Fore.YELLOW};')
-    print(f'  2. You should have {Fore.CYAN}Cassandra database{Fore.YELLOW} deployed {Fore.RED}(v3.11.6+){Fore.YELLOW}.{Style.RESET_ALL}')
+    print(
+        f'  2. You should have {Fore.CYAN}Cassandra database{Fore.YELLOW} deployed {Fore.RED}(v3.11.6+){Fore.YELLOW}.{Style.RESET_ALL}')
     proceed = input(f'Proceed to th2 installation ({Fore.YELLOW}y/N{Style.RESET_ALL}): ')
     if proceed.lower() != 'y':
         print(f'{Fore.YELLOW}Cancelling installation...{Style.RESET_ALL}')
@@ -49,6 +51,14 @@ def delete_namespace(k8s_core: CoreV1Api, name: str):
         k8s_core.delete_namespace(name=name)
     except:
         print_error(f'Unable to delete "{name}" namespace')
+
+
+def delete_pv(k8s_core: CoreV1Api, name: str):
+    try:
+        k8s_core.delete_persistent_volume(name=name)
+    except:
+        print_error(f'Unable to delete "{name}" PersistentVolume')
+
 
 def install_flannel(k8s_client: ApiClient):
     try:

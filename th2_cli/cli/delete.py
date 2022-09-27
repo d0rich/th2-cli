@@ -1,6 +1,6 @@
-from th2_cli.utils.infra import pre_delete_warning, get_infra_mgr_config, delete_namespace
+from th2_cli.utils.infra import pre_delete_warning, get_infra_mgr_config, delete_namespace, delete_pv
 from th2_cli.utils import read_value, print_info, print_used_value
-from th2_cli.utils.kubernetes import connect, get_namespaces
+from th2_cli.utils.kubernetes import connect, get_namespaces, get_pvs
 
 
 def delete():
@@ -17,5 +17,9 @@ def delete():
     for ns in th2_namespaces:
         print_info(f'Deleting {ns} namespace...')
         delete_namespace(k8s_core, ns)
+    print_info('Deleting th2 PersistentVolumes...')
+    for pv in get_pvs(k8s_core):
+        print_info(f'Deleting {pv} PersistentVolume...')
+        delete_pv(k8s_core, pv)
     print_info('th2 is deleted from your Kubernetes cluster')
 
