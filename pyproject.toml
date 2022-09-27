@@ -1,7 +1,11 @@
 [tool.poetry]
 name = "th2-cli"
-version = "0.2.2"
+version = "1.5.0"
 description = "👨‍💻 CLI for managing th2 infrastructure in Kubernetes cluster"
+homepage = "https://github.com/d0rich/th2-cli"
+repository = "https://github.com/d0rich/th2-cli"
+keywords = "th2, cli, kubernetes, cassandra, helm-charts"
+license = "MIT"
 readme = "README.md"
 authors = ["Nikolay Dorofeev <dorich2000@gmail.com>"]
 

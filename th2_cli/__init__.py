@@ -1,4 +1,4 @@
-__version__ = '0.2.2'
+__version__ = '1.5.0'
 
 import fire
 from th2_cli.cli import Th2Cli
