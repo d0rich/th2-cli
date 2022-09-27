@@ -101,7 +101,7 @@ def install():
                                       InstallTemplates.prometheus_operator_values(
                                           hosts=install_config.kubernetes.hostname()))
     charts_installer.add_helm_release('kubernetes-dashboard', 'kubernetes-dashboard',
-                                      'https://kubernetes.github.io/dashboard/', '5.9.0',
+                                      'https://kubernetes.github.io/dashboard/', '5.6.0',
                                       InstallTemplates.dashboard_values(hosts=install_config.kubernetes.hostname()))
     charts_installer.add_helm_release('grafana', 'loki-stack',
                                       'https://grafana.github.io/helm-charts', '0.40.1',
