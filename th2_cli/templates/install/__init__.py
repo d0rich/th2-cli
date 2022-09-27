@@ -1,5 +1,6 @@
 import yaml
 from typing import Iterator
+from th2_cli.utils import get_file, write_file
 
 from th2_cli.templates.install.values.dashboard import yaml as dashboard_values_yaml
 from th2_cli.templates.install.values.helm_operator import yaml as helm_operator_values_yaml
@@ -41,20 +42,24 @@ class InstallTemplates:
         return yaml.safe_load(changed_template)
 
     @staticmethod
-    def secrets() -> dict:
-        changed_template = secrets_yaml
+    def create_secrets_template():
+        write_file('secrets.yaml', secrets_yaml)
+
+    @staticmethod
+    def get_secrets() -> dict:
+        changed_template = get_file('secrets.yaml')
         return yaml.safe_load(changed_template)
 
     @staticmethod
-    def service_values(schema_link: str, pat_token: str = '',
+    def service_values(schema_link: str, git_username: str = '', git_password: str = '',
                        cluster_host: str = '',
                        cassandra_host: str = '127.0.0.1', cassandra_datacenter: str = 'datacenter1') -> dict:
-        changed_template = service_values_yaml\
-            .replace('<repository>', schema_link)\
-            .replace('<username>', pat_token)\
-            .replace('<password>', pat_token)\
-            .replace('<host>', cluster_host)\
-            .replace('<cassandra-host>', cassandra_host)\
+        changed_template = service_values_yaml \
+            .replace('<repository>', schema_link) \
+            .replace('<username>', git_username) \
+            .replace('<password>', git_password) \
+            .replace('<host>', cluster_host) \
+            .replace('<cassandra-host>', cassandra_host) \
             .replace('<cassandra-dc>', cassandra_datacenter)
         return yaml.safe_load(changed_template)
 

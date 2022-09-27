@@ -23,6 +23,13 @@ def get_namespaces(k8s_core: CoreV1Api) -> List[str]:
     return namespaces
 
 
+def get_pvs(k8s_core: CoreV1Api) -> List[str]:
+    pvs = list(
+        map(lambda item: item.metadata.name, k8s_core.list_persistent_volume().items)
+    )
+    return pvs
+
+
 def get_nodes(k8s_core: CoreV1Api) -> List[str]:
     nodes = list(
         map(lambda item: item.metadata.name, k8s_core.list_node().items)
@@ -48,3 +55,9 @@ def create_secret(k8s_core: CoreV1Api, name: str, data: dict = None, string_data
     except:
         print_error(f'Failed to create "{name}" secret')
 
+
+def delete_secret(k8s_core: CoreV1Api, name: str, namespace: str = 'service'):
+    try:
+        k8s_core.delete_namespaced_secret(name, namespace)
+    except:
+        print_error(f'Failed to delete "{name}" secret')
