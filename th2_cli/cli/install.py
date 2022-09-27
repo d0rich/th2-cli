@@ -1,4 +1,5 @@
-from th2_cli.utils import read_value, is_ip, write_file, print_info, print_used_value, yes_no_input, check_file
+from th2_cli.utils import read_value, is_ip, write_file, print_info, print_used_value, yes_no_input, check_file, \
+    enter_to_continue
 from th2_cli.utils.kubernetes import connect, get_cluster_host, create_secret
 from th2_cli.utils.cassandra import choose_datacenter
 from th2_cli.utils.crypto import generate_ssh_keys
@@ -83,6 +84,15 @@ def install():
         write_file('infra-mgr-rsa.key', private_key)
         write_file('infra-mgr-rsa.key.pub', public_key)
         create_secret(k8s_core, 'infra-mgr', namespace='service', string_data={'infra-mgr': private_key})
+    if check_file('secrets.yaml'):
+        if yes_no_input('"secrets.yaml" file is detected. Would you like to rewrite it with template?'):
+            InstallTemplates.create_secrets_template()
+            print_info('"secrets.yaml" template is created.')
+    else:
+        InstallTemplates.create_secrets_template()
+        print_info('"secrets.yaml" template is created.')
+    print('Fill "secrets.yaml" with relevant credentials')
+    enter_to_continue()
     # Deploy infrastructure
     print_info('Deploying monitoring infrastructure...')
     charts_installer = ChartsInstaller(namespace='monitoring', th2_version=TH2_VERSION)
@@ -115,7 +125,7 @@ def install():
                                               cluster_host=install_config.kubernetes.host,
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
-                                          **InstallTemplates.secrets()
+                                          **InstallTemplates.get_secrets()
                                       })
     charts_installer.install_charts()
     print_info(f'th2 {TH2_VERSION} is installed')

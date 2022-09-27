@@ -65,3 +65,7 @@ def write_file(name: str, content: any):
     f = open(name, "w")
     f.write(content)
     f.close()
+
+
+def enter_to_continue():
+    input(f'Press {Back.YELLOW}Enter{Style.RESET_ALL} to continue')
