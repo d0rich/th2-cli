@@ -1,4 +1,4 @@
-Works with th2 1.5.4
+Works with th2 1.7.3
 
 ## Using
 
@@ -33,6 +33,28 @@ Wait until all required namespaces are terminated.
 
 ```commandline
 th2 install
+```
+
+### Get th2 status
+
+Display information about all th2-related namespaces in Kubernetes.
+
+```commandline
+th2 status
+```
+
+### infra-mgr
+
+Display status of infra-mgr pod:
+
+```commandline
+th2 mgr status
+```
+
+Display last logs of infra-mgr pod:
+
+```commandline
+th2 mgr logs
 ```
 
 ## Configurations templates
