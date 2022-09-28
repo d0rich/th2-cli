@@ -23,9 +23,15 @@ def get_pods(k8s_core: CoreV1Api, namespace: str = 'default') -> List[str]:
     return pods
 
 
+def get_pod_status(k8s_core: CoreV1Api, pod: str, namespace: str = 'default') -> str:
+    logs = k8s_core.read_namespaced_pod_status(pod, namespace)
+    return logs
+
+
 def get_pod_logs(k8s_core: CoreV1Api, pod: str, namespace: str = 'default') -> str:
     logs = k8s_core.read_namespaced_pod_log(pod, namespace)
     return logs
+
 
 def get_namespaces(k8s_core: CoreV1Api) -> List[str]:
     namespaces = list(
