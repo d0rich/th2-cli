@@ -10,6 +10,11 @@ infraMgr:
 infraOperator:
   config:
     k8sUrl: "<host>"
+    
+infraEditor:
+  image:
+    repository: ghcr.io/th2-net/th2-infra-editor
+    tag: 1.0.65
 
 ingress:
   host: &host <hostname>
