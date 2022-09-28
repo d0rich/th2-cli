@@ -1,4 +1,5 @@
-yaml = '''# required only for images from a private registry, will be attached as the first PullSecret to deployments
+yaml = '''
+# required only for images from a private registry, will be attached as the first PullSecret to deployments
 #productRegistry:
 #  username: user
 #  password: password
@@ -17,7 +18,7 @@ yaml = '''# required only for images from a private registry, will be attached a
 #  name: private-registry-3.example.com # components registry
 
 cassandra:
-# set credentials for the existing Cassandra cluster
+# set credentials for existing Cassandra cluster
   dbUser:
     user: cassandra
     password: cassandra
@@ -27,4 +28,5 @@ rabbitmq:
   rabbitmqUsername: th2
   rabbitmqPassword: rab-pass
   # must be random string
-  rabbitmqErlangCookie: cookie'''
+  rabbitmqErlangCookie: cookie
+'''

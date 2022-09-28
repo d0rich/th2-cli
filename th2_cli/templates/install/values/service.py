@@ -1,8 +1,13 @@
-yaml = '''infraMgr:
+yaml = '''
+infraMgr:
   git:
     repository: <repository>
     httpAuthUsername: <username>
     httpAuthPassword: <password>
+
+infraOperator:
+  config:
+    k8sUrl: "<host>"
 
 rabbitmq:
   prometheus:
@@ -12,12 +17,13 @@ rabbitmq:
     enabled: true
     storageClass: local-storage
     size: 10Gi
-    
-externalRabbitMQHost:
-  host: <host>
+  ingress:
+    enabled: true
+    hostName: <hostname>
 
 cassandra:
   internal: false
   host: <cassandra-host>
   cluster:
-    datacenter: <datacenter>'''
+    datacenter: <datacenter>
+'''

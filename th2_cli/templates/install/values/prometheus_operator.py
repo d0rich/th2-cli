@@ -1,4 +1,5 @@
-yaml = '''global:
+yaml = '''
+global:
   imagePullSecrets:
 # alertmanager:
 #   alertmanagerSpec:
@@ -67,10 +68,17 @@ grafana:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
       nginx.ingress.kubernetes.io/use-regex: "true"
     path: /grafana/?(.*)
-    hosts: [<hosts>]
+    hosts: []
   grafana.ini:
     server:
       root_url: http://localhost:3000/grafana
+  additionalDataSources:
+  - name: Loki
+    access: proxy
+    type: loki
+    url: http://loki:3100
+    jsonData:
+      maxLines: "5000"
   persistence:
     enabled: true
     existingClaim: grafana
@@ -86,4 +94,5 @@ grafana:
 #     repository: quay.io/prometheus/node-exporter
 # kube-state-metrics:
 #   image:
-#     repository: quay.io/coreos/kube-state-metrics'''
+#     repository: quay.io/coreos/kube-state-metrics
+'''
