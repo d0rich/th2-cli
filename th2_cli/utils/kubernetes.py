@@ -16,6 +16,17 @@ def create_namespace_object(name: str) -> V1Namespace:
     return V1Namespace(metadata=client.V1ObjectMeta(name=name))
 
 
+def get_pods(k8s_core: CoreV1Api, namespace: str = 'default') -> List[str]:
+    pods = list(
+        map(lambda item: item.metadata.name, k8s_core.list_namespaced_pod(namespace).items)
+    )
+    return pods
+
+
+def get_pod_logs(k8s_core: CoreV1Api, pod: str, namespace: str = 'default') -> str:
+    logs = k8s_core.read_namespaced_pod_log(pod, namespace)
+    return logs
+
 def get_namespaces(k8s_core: CoreV1Api) -> List[str]:
     namespaces = list(
         map(lambda item: item.metadata.name, k8s_core.list_namespace().items)
