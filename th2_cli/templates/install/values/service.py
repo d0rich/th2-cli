@@ -9,6 +9,14 @@ infraOperator:
   config:
     k8sUrl: "<host>"
 
+ingress:
+  host: &host <hostname>
+
+dashboard:
+  ingress:
+    paths:
+      - /dashboard($|/.*)
+
 rabbitmq:
   prometheus:
     operator:
