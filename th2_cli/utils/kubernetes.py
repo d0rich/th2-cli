@@ -24,8 +24,8 @@ def get_pods(k8s_core: CoreV1Api, namespace: str = 'default') -> List[str]:
 
 
 def get_pod_status(k8s_core: CoreV1Api, pod: str, namespace: str = 'default') -> str:
-    logs = k8s_core.read_namespaced_pod_status(pod, namespace)
-    return logs
+    p = k8s_core.read_namespaced_pod(pod, namespace)
+    return p.status.phase
 
 
 def get_pod_logs(k8s_core: CoreV1Api, pod: str, namespace: str = 'default') -> str:

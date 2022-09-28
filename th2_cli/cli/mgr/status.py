@@ -1,4 +1,4 @@
-from th2_cli.utils.kubernetes import get_pods, get_pod_logs, connect
+from th2_cli.utils.kubernetes import get_pods, get_pod_status, connect
 from th2_cli.utils import print_error
 
 
@@ -9,4 +9,4 @@ def status():
     if not mgr_pod:
         print_error('infra-mgr does not exist')
     else:
-        print(get_pod_logs(k8s_core, mgr_pod, 'service'))
+        print(get_pod_status(k8s_core, mgr_pod, 'service'))
