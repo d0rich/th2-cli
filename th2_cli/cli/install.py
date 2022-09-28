@@ -95,7 +95,7 @@ def install():
     enter_to_continue()
     # Deploy infrastructure
     print_info('Deploying monitoring infrastructure...')
-    charts_installer = ChartsInstaller(namespace='monitoring', th2_version=TH2_VERSION)
+    charts_installer = ChartsInstaller(namespace='monitoring')
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
                                       InstallTemplates.prometheus_operator_values(
@@ -105,12 +105,12 @@ def install():
                                       InstallTemplates.loki_values())
     charts_installer.install_charts()
     print_info('Deploying service infrastructure...')
-    charts_installer = ChartsInstaller(namespace='service', th2_version=TH2_VERSION)
+    charts_installer = ChartsInstaller(namespace='service')
     charts_installer.add_helm_release('ingress-nginx', 'ingress-nginx',
                                       'https://kubernetes.github.io/ingress-nginx', '3.31.0',
                                       InstallTemplates.ingress_values())
     charts_installer.add_helm_release('th2', 'th2',
-                                      'https://th2-net.github.io', TH2_VERSION,
+                                      'https://th2-net.github.io', '1.7.3',
                                       {
                                           **InstallTemplates.service_values(
                                               schema_link=install_config.infra_mgr.git.repository,

@@ -1,16 +1,18 @@
 from avionix import ChartDependency, ChartBuilder, ChartInfo
 from th2_cli.utils import print_error
 import tempfile
+import shutil
+from th2_cli import __version__
+
 
 class ChartsInstaller:
 
-    def __init__(self, namespace: str, th2_version: str):
+    def __init__(self, namespace: str):
         self.namespace = namespace
-        self.th2_version = th2_version
         self.chart_info = ChartInfo(
             api_version='v2',
             name=f'th2--{namespace}',
-            version=th2_version
+            version=__version__
         )
 
     def add_helm_release(self, repo_name: str, chart_name: str, repo_url: str, version: str, values: dict = {}):
@@ -25,11 +27,13 @@ class ChartsInstaller:
 
     def install_charts(self):
         try:
-            chart_builder = ChartBuilder(self.chart_info, [], output_directory=tempfile.gettempdir())
+            chart_builder = ChartBuilder(self.chart_info, [],
+                                         keep_chart=False,
+                                         output_directory=tempfile.gettempdir())
+            shutil.rmtree(chart_builder.chart_folder_path, True)
             chart_builder.install_chart({
                 'namespace': self.namespace,
                 "dependency-update": None
             })
         except:
             print_error(f'Deploying infrastructure into "{self.namespace}" was unsuccessful')
-
