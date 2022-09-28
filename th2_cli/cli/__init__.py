@@ -1,5 +1,6 @@
 from th2_cli.cli.install import install
 from th2_cli.cli.delete import delete
+from th2_cli.cli.status import status
 
 import signal
 
@@ -17,3 +18,6 @@ class Th2Cli:
     def delete(self):
         signal.signal(signal.SIGINT, handler)
         delete()
+
+    def status(self):
+        status()

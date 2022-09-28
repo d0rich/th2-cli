@@ -23,6 +23,11 @@ def get_namespaces(k8s_core: CoreV1Api) -> List[str]:
     return namespaces
 
 
+def get_namespace_status(k8s_core: CoreV1Api, name: str) -> str:
+    namespace = k8s_core.read_namespace(name)
+    return namespace.status.phase
+
+
 def get_pvs(k8s_core: CoreV1Api) -> List[str]:
     pvs = list(
         map(lambda item: item.metadata.name, k8s_core.list_persistent_volume().items)
