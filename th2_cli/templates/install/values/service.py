@@ -1,7 +1,5 @@
 yaml = '''
 infraMgr:
-  image:
-    tag: 1.7.22
   git:
     repository: <repository>
     httpAuthUsername: <username>
