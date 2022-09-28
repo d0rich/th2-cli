@@ -1,5 +1,5 @@
 from th2_cli.utils.infra import pre_delete_warning, get_infra_mgr_config, delete_namespace, delete_pv
-from th2_cli.utils import read_value, print_info, print_used_value
+from th2_cli.utils import read_value, print_info, print_used_value, print_error
 from th2_cli.utils.kubernetes import connect, get_namespaces, get_pvs
 from halo import Halo
 import time
@@ -9,7 +9,11 @@ def delete():
     pre_delete_warning()
     print_info('Connecting to the cluster...')
     k8s_client, k8s_core = connect()
-    prefix = get_infra_mgr_config(k8s_core)['kubernetes']['namespacePrefix']
+    prefix = 'th2-'
+    try:
+        prefix = get_infra_mgr_config(k8s_core)['kubernetes']['namespacePrefix']
+    except:
+        print_error('Unable to get namespace prefix from config')
     th2_namespaces = list(filter(
         lambda ns: ns.startswith(prefix) or ns in ['service', 'monitoring'],
         get_namespaces(k8s_core)))
