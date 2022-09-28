@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "th2-cli"
-version = "1.5.0"
+version = "1.7.0"
 description = "👨‍💻 CLI for managing th2 infrastructure in Kubernetes cluster"
 homepage = "https://github.com/d0rich/th2-cli"
 repository = "https://github.com/d0rich/th2-cli"
@@ -21,6 +21,7 @@ cassandra-driver = "^3.25.0"
 requests = "^2.28.1"
 urllib3 = "^1.26.12"
 dataclass-wizard = {extras = ["yaml"], version = "^0.22.1"}
+halo = "^0.0.31"
 
 [tool.poetry.dev-dependencies]
 pytest = "^5.2"

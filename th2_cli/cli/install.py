@@ -10,7 +10,7 @@ from th2_cli.utils.install_config import InstallConfig
 from simple_term_menu import TerminalMenu
 from th2_cli.templates.install import InstallTemplates
 
-TH2_VERSION = '1.5.4'
+TH2_VERSION = '1.7.3'
 
 
 def install():
@@ -95,34 +95,29 @@ def install():
     enter_to_continue()
     # Deploy infrastructure
     print_info('Deploying monitoring infrastructure...')
-    charts_installer = ChartsInstaller(namespace='monitoring', th2_version=TH2_VERSION)
+    charts_installer = ChartsInstaller(namespace='monitoring')
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
                                       InstallTemplates.prometheus_operator_values(
                                           hosts=install_config.kubernetes.hostname()))
-    charts_installer.add_helm_release('kubernetes-dashboard', 'kubernetes-dashboard',
-                                      'https://kubernetes.github.io/dashboard/', '5.6.0',
-                                      InstallTemplates.dashboard_values(hosts=install_config.kubernetes.hostname()))
     charts_installer.add_helm_release('grafana', 'loki-stack',
-                                      'https://grafana.github.io/helm-charts', '0.40.1',
+                                      'https://grafana.github.io/helm-charts', '2.4.1',
                                       InstallTemplates.loki_values())
     charts_installer.install_charts()
     print_info('Deploying service infrastructure...')
-    charts_installer = ChartsInstaller(namespace='service', th2_version=TH2_VERSION)
-    charts_installer.add_helm_release('fluxcd', 'helm-operator',
-                                      'https://charts.fluxcd.io', '1.2.0',
-                                      InstallTemplates.helm_operator_values())
+    charts_installer = ChartsInstaller(namespace='service')
     charts_installer.add_helm_release('ingress-nginx', 'ingress-nginx',
                                       'https://kubernetes.github.io/ingress-nginx', '3.31.0',
                                       InstallTemplates.ingress_values())
     charts_installer.add_helm_release('th2', 'th2',
-                                      'https://th2-net.github.io', '1.5.4',
+                                      'https://th2-net.github.io', '1.7.3',
                                       {
                                           **InstallTemplates.service_values(
                                               schema_link=install_config.infra_mgr.git.repository,
                                               git_username=install_config.infra_mgr.git.http_auth_username,
                                               git_password=install_config.infra_mgr.git.http_auth_password,
                                               cluster_host=install_config.kubernetes.host,
+                                              cluster_hostname=install_config.kubernetes.hostname(),
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
                                           **InstallTemplates.get_secrets()

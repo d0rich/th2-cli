@@ -1,8 +1,26 @@
-yaml = '''infraMgr:
+yaml = '''
+infraMgr:
   git:
     repository: <repository>
     httpAuthUsername: <username>
     httpAuthPassword: <password>
+
+infraOperator:
+  config:
+    k8sUrl: "<host>"
+    
+infraEditor:
+  image:
+    repository: ghcr.io/th2-net/th2-infra-editor
+    tag: 1.0.65
+
+ingress:
+  host: &host <hostname>
+
+dashboard:
+  ingress:
+    paths:
+      - /dashboard($|/.*)
 
 rabbitmq:
   prometheus:
@@ -12,12 +30,13 @@ rabbitmq:
     enabled: true
     storageClass: local-storage
     size: 10Gi
-    
-externalRabbitMQHost:
-  host: <host>
+  ingress:
+    enabled: true
+    hostName: <hostname>
 
 cassandra:
   internal: false
   host: <cassandra-host>
   cluster:
-    datacenter: <datacenter>'''
+    datacenter: <datacenter>
+'''
