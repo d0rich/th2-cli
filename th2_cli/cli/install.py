@@ -1,3 +1,5 @@
+import deepmerge
+
 from th2_cli.utils import read_value, is_ip, write_file, print_info, print_used_value, yes_no_input, check_file, \
     enter_to_continue
 from th2_cli.utils.kubernetes import connect, get_cluster_host, create_secret
@@ -109,10 +111,8 @@ def install():
     charts_installer.add_helm_release('ingress-nginx', 'ingress-nginx',
                                       'https://kubernetes.github.io/ingress-nginx', '3.31.0',
                                       InstallTemplates.ingress_values())
-    charts_installer.add_helm_release('th2', 'th2',
-                                      'https://th2-net.github.io', '1.7.3',
-                                      {
-                                          **InstallTemplates.service_values(
+    th2_values: dict = deepmerge.always_merger.merge(
+        InstallTemplates.service_values(
                                               schema_link=install_config.infra_mgr.git.repository,
                                               git_username=install_config.infra_mgr.git.http_auth_username,
                                               git_password=install_config.infra_mgr.git.http_auth_password,
@@ -120,8 +120,11 @@ def install():
                                               cluster_hostname=install_config.kubernetes.hostname(),
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
-                                          **InstallTemplates.get_secrets()
-                                      })
+        InstallTemplates.get_secrets())
+    print(th2_values)
+    charts_installer.add_helm_release('th2', 'th2',
+                                      'https://th2-net.github.io', '1.7.3',
+                                      th2_values)
     charts_installer.install_charts()
     print_info(f'th2 {TH2_VERSION} is installed')
     if yes_no_input('Would you like to save th2 config in the current directory?', True):

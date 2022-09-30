@@ -38,5 +38,5 @@ cassandra:
   internal: false
   host: <cassandra-host>
   cluster:
-    datacenter: <datacenter>
+    datacenter: <cassandra-dc>
 '''
