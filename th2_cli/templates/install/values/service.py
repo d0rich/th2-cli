@@ -25,7 +25,7 @@ dashboard:
 rabbitmq:
   prometheus:
     operator:
-      enabled: false
+      enabled: true
   persistentVolume:
     enabled: true
     storageClass: local-storage
