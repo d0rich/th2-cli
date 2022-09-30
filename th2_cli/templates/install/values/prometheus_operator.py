@@ -68,7 +68,7 @@ grafana:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
       nginx.ingress.kubernetes.io/use-regex: "true"
     path: /grafana/?(.*)
-    hosts: []
+    hosts: [<hosts>]
   grafana.ini:
     server:
       root_url: http://localhost:3000/grafana
