@@ -18,6 +18,8 @@ ingress:
   host: &host <hostname>
 
 dashboard:
+  metrics-server:
+    enabled: false
   ingress:
     paths:
       - /dashboard($|/.*)
