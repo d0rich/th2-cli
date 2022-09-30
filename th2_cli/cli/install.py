@@ -121,7 +121,6 @@ def install():
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
         InstallTemplates.get_secrets())
-    print(th2_values)
     charts_installer.add_helm_release('th2', 'th2',
                                       'https://th2-net.github.io', '1.7.3',
                                       th2_values)
