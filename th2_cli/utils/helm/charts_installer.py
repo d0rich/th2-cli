@@ -36,4 +36,4 @@ class ChartsInstaller:
                 "dependency-update": None
             })
         except:
-            print_error(f'Deploying infrastructure into "{self.namespace}" was unsuccessful')
+            print_error(f'Error occurred during deploy of "{self.namespace}" infrastructure')

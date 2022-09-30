@@ -139,6 +139,14 @@ timedelta = ["pytimeparse (>=1.1.7)"]
 yaml = ["PyYAML (>=5.3)"]
 
 [[package]]
+name = "deepmerge"
+version = "1.0.1"
+description = "a toolset to deeply merge python dictionaries."
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
 name = "fire"
 version = "0.4.0"
 description = "A library for automatically generating command line interfaces."
@@ -506,7 +514,7 @@ test = ["websockets"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "99f3c89b511c5a258ac3100fe543ca8dd3d54948768bc1757826407e2e228525"
+content-hash = "c0ddb6b220295124bea25e592ac622e5a28c84901e6f9e6c89d6371604f5ad7d"
 
 [metadata.files]
 atomicwrites = [
@@ -660,6 +668,10 @@ cryptography = [
 dataclass-wizard = [
     {file = "dataclass-wizard-0.22.1.tar.gz", hash = "sha256:77a6584a758788ca0d32cf9d09ebbd3cb12e5eb5dcded4d846e358257f5fc3a0"},
     {file = "dataclass_wizard-0.22.1-py2.py3-none-any.whl", hash = "sha256:e2cef176cbfac9f5adc812a8957d67aafc0c9c85b8c72ac7ca0ae0e7e692db38"},
+]
+deepmerge = [
+    {file = "deepmerge-1.0.1-py3-none-any.whl", hash = "sha256:f851fff957697cb8f4580b465acf5c2d35841695306ff0abb9cb9c273ad76112"},
+    {file = "deepmerge-1.0.1.tar.gz", hash = "sha256:4b44779ed3d2fb791bb181fc2683423496fea428abb7af37feb23286de7f0a1a"},
 ]
 fire = [
     {file = "fire-0.4.0.tar.gz", hash = "sha256:c5e2b8763699d1142393a46d0e3e790c5eb2f0706082df8f647878842c216a62"},
