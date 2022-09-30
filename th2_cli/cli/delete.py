@@ -21,10 +21,6 @@ def delete():
     for ns in th2_namespaces:
         print(f'  Deleting {ns} namespace...')
         delete_namespace(k8s_core, ns)
-    print_info('Deleting th2 PersistentVolumes...')
-    for pv in get_pvs(k8s_core):
-        print(f'  Deleting {pv} PersistentVolume...')
-        delete_pv(k8s_core, pv)
     spinner = Halo(text='Waiting until all th2 namespaces are terminated...', spinner='dots')
     spinner.start()
     while len(th2_namespaces) != 0:
@@ -33,5 +29,9 @@ def delete():
             get_namespaces(k8s_core)))
         time.sleep(1)
     spinner.stop()
+    print_info('Deleting th2 PersistentVolumes...')
+    for pv in get_pvs(k8s_core):
+        print(f'  Deleting {pv} PersistentVolume...')
+        delete_pv(k8s_core, pv)
     print_info('th2 is deleted from your Kubernetes cluster')
 
