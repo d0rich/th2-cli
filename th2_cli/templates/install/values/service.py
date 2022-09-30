@@ -18,6 +18,8 @@ ingress:
   host: &host <hostname>
 
 dashboard:
+  metrics-server:
+    enabled: false
   ingress:
     paths:
       - /dashboard($|/.*)
@@ -25,7 +27,7 @@ dashboard:
 rabbitmq:
   prometheus:
     operator:
-      enabled: false
+      enabled: true
   persistentVolume:
     enabled: true
     storageClass: local-storage
