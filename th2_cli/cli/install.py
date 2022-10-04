@@ -48,7 +48,7 @@ def install():
     if is_ip(install_config.kubernetes.host):
         install_config.kubernetes.host = read_value('Enter Kubernetes cluster hostname, if it exist.', 'hostname') \
                                          or install_config.kubernetes.host
-        print_used_value('Cluster hostname', install_config.kubernetes.hostname())
+        print_used_value('Cluster hostname', install_config.kubernetes.hostname or '')
     # Get information about Cassandra database
     if install_config.cassandra.host_is_default():
         install_config.cassandra.host = read_value('Enter hostname of Cassandra to access it from the '
@@ -101,7 +101,7 @@ def install():
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
                                       InstallTemplates.prometheus_operator_values(
-                                          hosts=install_config.kubernetes.hostname()))
+                                          hosts=install_config.kubernetes.hostname))
     charts_installer.add_helm_release('grafana', 'loki-stack',
                                       'https://grafana.github.io/helm-charts', '2.4.1',
                                       InstallTemplates.loki_values())
@@ -117,7 +117,7 @@ def install():
                                               git_username=install_config.infra_mgr.git.http_auth_username,
                                               git_password=install_config.infra_mgr.git.http_auth_password,
                                               cluster_host=install_config.kubernetes.host,
-                                              cluster_hostname=install_config.kubernetes.hostname(),
+                                              cluster_hostname=install_config.kubernetes.hostname,
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
         InstallTemplates.get_secrets())
@@ -128,7 +128,3 @@ def install():
     print_info(f'th2 {TH2_VERSION} is installed')
     if yes_no_input('Would you like to save th2 config in the current directory?', True):
         write_file('th2-cli-install-config.yaml', install_config.to_yaml())
-
-
-
-
