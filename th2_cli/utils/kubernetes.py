@@ -13,6 +13,11 @@ def connect() -> Tuple[ApiClient, CoreV1Api]:
         exit(1)
     k8s_client = client.ApiClient()
     k8s_core = client.CoreV1Api()
+    try:
+        k8s_core.list_node()
+    except:
+        print_error('Kubernetes cluster is unavailable')
+        exit(1)
     return k8s_client, k8s_core
 
 
