@@ -34,7 +34,7 @@ def install():
     create_namespace(k8s_core, 'service')
     # Apply PV's
     print('Please choose node for storing PersistentVolumes')
-    if not install_config.kubernetes.pvs_node:
+    if install_config.kubernetes.pvs_node_is_default():
         install_config.kubernetes.pvs_node = choose_node(k8s_core)
     print_used_value('Node for PersistentVolumes storage', install_config.kubernetes.pvs_node)
     pv_folders_warning()
@@ -42,19 +42,19 @@ def install():
     apply_yaml(k8s_client, InstallTemplates.pvs(node_name=install_config.kubernetes.pvs_node), 'pvs.yaml')
     apply_yaml(k8s_client, InstallTemplates.pvcs(), 'pvcs.yaml')
     # Get information about Kubernetes cluster
-    if not install_config.kubernetes.host:
+    if install_config.kubernetes.host_is_default():
         install_config.kubernetes.host = get_cluster_host(k8s_client)
     print_used_value('Cluster host', install_config.kubernetes.host)
     if is_ip(install_config.kubernetes.host):
         install_config.kubernetes.host = read_value('Enter Kubernetes cluster hostname, if it exist.', 'hostname') \
                                          or install_config.kubernetes.host
-        print_used_value('Cluster hostname', install_config.kubernetes.hostname())
+        print_used_value('Cluster hostname', install_config.kubernetes.hostname or '')
     # Get information about Cassandra database
-    if not install_config.cassandra.host:
+    if install_config.cassandra.host_is_default():
         install_config.cassandra.host = read_value('Enter hostname of Cassandra to access it from the '
                                                    'Kubernetes cluster', 'host', '127.0.0.1')
     print_used_value('Cassandra host', install_config.cassandra.host)
-    if not install_config.cassandra.datacenter:
+    if install_config.cassandra.datacenter_is_default():
         dc_input_index = TerminalMenu(
             [
                 'Enter datacenter manually',
@@ -69,11 +69,11 @@ def install():
             install_config.cassandra.datacenter = choose_datacenter(install_config.cassandra.host)
     print_used_value('Cassandra datacenter', install_config.cassandra.datacenter)
     # Get information about infra-schema
-    if not install_config.infra_mgr.git.repository:
+    if install_config.infra_mgr.git.repository_is_default():
         install_config.infra_mgr.git.repository = read_value('Enter link to your infra-schema', 'link')
     print_used_value('th2-infra-schema link', install_config.infra_mgr.git.repository)
     if install_config.infra_mgr.git.repository.startswith('https://'):
-        if not (install_config.infra_mgr.git.http_auth_username and install_config.infra_mgr.git.http_auth_password):
+        if install_config.infra_mgr.git.http_auth_username_is_default() or install_config.infra_mgr.git.http_auth_password_is_default():
             print_info('th2 will be authenticated in git by Personal Access Token (PAT)')
             token = read_value('Enter PAT for your infra-schema', 'PAT')
             install_config.infra_mgr.git.http_auth_username = token
@@ -101,7 +101,7 @@ def install():
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
                                       InstallTemplates.prometheus_operator_values(
-                                          hosts=install_config.kubernetes.hostname()))
+                                          hosts=install_config.kubernetes.hostname))
     charts_installer.add_helm_release('grafana', 'loki-stack',
                                       'https://grafana.github.io/helm-charts', '2.4.1',
                                       InstallTemplates.loki_values())
@@ -117,7 +117,7 @@ def install():
                                               git_username=install_config.infra_mgr.git.http_auth_username,
                                               git_password=install_config.infra_mgr.git.http_auth_password,
                                               cluster_host=install_config.kubernetes.host,
-                                              cluster_hostname=install_config.kubernetes.hostname(),
+                                              cluster_hostname=install_config.kubernetes.hostname,
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
         InstallTemplates.get_secrets())
@@ -128,7 +128,3 @@ def install():
     print_info(f'th2 {TH2_VERSION} is installed')
     if yes_no_input('Would you like to save th2 config in the current directory?', True):
         write_file('th2-cli-install-config.yaml', install_config.to_yaml())
-
-
-
-
