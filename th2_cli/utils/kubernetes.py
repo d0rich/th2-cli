@@ -6,7 +6,11 @@ from th2_cli.utils import print_error
 
 
 def connect() -> Tuple[ApiClient, CoreV1Api]:
-    config.load_kube_config()
+    try:
+        config.load_kube_config()
+    except:
+        print_error('kube config is not valid or not presented')
+        exit(1)
     k8s_client = client.ApiClient()
     k8s_core = client.CoreV1Api()
     return k8s_client, k8s_core
