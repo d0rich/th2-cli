@@ -101,7 +101,7 @@ def install():
     charts_installer.add_helm_release('prometheus-community', 'kube-prometheus-stack',
                                       'https://prometheus-community.github.io/helm-charts', '15.0.0',
                                       InstallTemplates.prometheus_operator_values(
-                                          hosts=install_config.kubernetes.hostname))
+                                          hosts=install_config.kubernetes.hostname or ''))
     charts_installer.add_helm_release('grafana', 'loki-stack',
                                       'https://grafana.github.io/helm-charts', '2.4.1',
                                       InstallTemplates.loki_values())
@@ -117,7 +117,7 @@ def install():
                                               git_username=install_config.infra_mgr.git.http_auth_username,
                                               git_password=install_config.infra_mgr.git.http_auth_password,
                                               cluster_host=install_config.kubernetes.host,
-                                              cluster_hostname=install_config.kubernetes.hostname,
+                                              cluster_hostname=install_config.kubernetes.hostname or '',
                                               cassandra_host=install_config.cassandra.host,
                                               cassandra_datacenter=install_config.cassandra.datacenter),
         InstallTemplates.get_secrets())
