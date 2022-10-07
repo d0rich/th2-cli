@@ -8,6 +8,20 @@ Install:
 pip install th2-cli
 ```
 
+Check version of CLI:
+
+```commandline
+th2 version
+```
+
+Output example:
+
+```commandline
+$ th2 version
+th2 CLI v1.7.3
+Source repository: https://github.com/d0rich/th2-cli
+```
+
 ### Install th2
 
 If you already have configurations in `th2-cli-install-config.yaml` or `secrets.yaml`, it will be convenient to run process from the directory with these files.
