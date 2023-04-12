@@ -1,0 +1,1 @@
+/* empty css                 */import{_ as t}from"./_plugin-vue_export-helper.c27b6911.js";import{o as e,b as s,p as r}from"./entry.50cd521b.js";import"https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";const p={name:"DChip"},a={class:"d-chip"};function n(o,c,i,_,m,d){return e(),s("span",a,[r(o.$slots,"default")])}const $=t(p,[["render",n]]);export{$ as default};
