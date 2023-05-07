@@ -1,0 +1,4 @@
+User-agent: *
+Disallow: /
+
+Sitemap: https://th2-cli.d0rich.me/sitemap.xml
