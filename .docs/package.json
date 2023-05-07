@@ -4,6 +4,6 @@
     "nuxt": "^3.3.3"
   },
   "dependencies": {
-    "d0xigen": "^0.1.4"
+    "d0xigen": "^0.2.0"
   }
 }
