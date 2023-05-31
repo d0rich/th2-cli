@@ -17,7 +17,8 @@ export default defineAppConfig({
     },
     d0richIndex: {
       complexity: 3,
-      tags: [ 'cli', 'microservices', 'dev-ops' ]
+      tags: [ 'cli', 'microservices', 'dev-ops' ],
+      freezeUpdateDate: new Date('2022-10-07')
     }
   }
 })
